@@ -1,6 +1,6 @@
 ---
 - name: Copy Python Script from GitHub to Target Servers
-  hosts: Demo Inventory  
+  hosts: "Demo Inventory"  
   become: yes  
 
   tasks:
