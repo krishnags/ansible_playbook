@@ -1,23 +1,36 @@
 ---
-- name: Retrieve Python Script from GitHub and Run on Target Servers
-  hosts: Demo Inventory  # Replace with your target group or hosts
-  become: yes  # Run tasks as the root user
+- name: Copy Python Script from GitHub to Target Servers
+  hosts: Demo Inventory  
+  become: yes  
 
   tasks:
+    # Install git package if not already installed
+    - name: Install git
+      apt:
+        name: git
+        state: present
+      when: ansible_os_family == 'Debian'
+
+    - name: Install git
+      yum:
+        name: git
+        state: present
+      when: ansible_os_family == 'RedHat'
+
     # Clone the GitHub repository to a temporary directory
     - name: Clone GitHub Repository
-      community.general.github_repository:
-        repo: 'krishnags/python-test'  # Replace with your GitHub username and repository name
+      git:
+        repo: 'https://github.com/krishnags/ansible_playbook.git'  # Replace with your GitHub username and repository name
         dest: '/tmp'  # Specify the destination directory on the target servers
         version: main  # Specify the branch or tag if needed
 
     # Copy the Python script to the target location
     - name: Copy Python Script to Target Location
       copy:
-        src: '/tmp/python-test.py'  # Replace with the path to your Python script in the repository
-        dest: '/tmp/python-test.py'  # Specify the destination path on the target servers
+        src: '/tmp/ansible_playbook/ansible-run.py'  # Replace with the path to your Python script in the repository
+        dest: '/tmp/ansible_playbook/ansible-run.py'  # Specify the destination path on the target servers
         mode: '0755'  # Set appropriate permissions
 
     # Execute the Python script on the target servers
     - name: Execute Python Script
-      command: python /tmp/python-test.py
+      command: python /tmp/ansible-run.py
